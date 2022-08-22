@@ -1,2 +1,3 @@
 # my-rust-tetris
-My rust journal
+
+My Tetris game (using raylib framework)
