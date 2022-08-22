@@ -4,18 +4,19 @@ mod grid;
 
 use raylib::prelude::*;
 
-use crate::{brick::Brick, common::Direction, config::Config};
+use crate::{brick::Brick, common::Direction, config::Config, input::game_controls::GameControls};
 
 use self::game::Game;
 
 pub struct World {
     current_brick: Brick,
     stack: Vec<Brick>,
+    game_control: GameControls,
     game: Game,
     dimension: Dimension,
 }
 
-pub struct Dimension {
+struct Dimension {
     h_size: i32,
     v_size: i32,
 }
@@ -35,9 +36,10 @@ impl Dimension {
 
 impl World {
     pub fn update_dimemsion(&mut self, config: &Config) {
+        let dim = config.dimension();
         self.dimension = Dimension {
-            h_size: config.grid_size.horizontal_size as i32,
-            v_size: config.grid_size.vertical_size as i32,
+            h_size: dim.0 as i32,
+            v_size: dim.1 as i32,
         }
     }
 
@@ -63,8 +65,8 @@ impl World {
         }
 
         self.game.increase_ticks();
-
-        self.on_pressed(handle);
+        self.game_control.update(handle);
+        self.on_pressed();
         if self.game.should_fall() {
             self.fall_brick();
         }
@@ -72,7 +74,7 @@ impl World {
 
     fn fall_brick(&mut self) {
         match self.check_and_move(Direction::Down) {
-            true => return, // after moving down sucessfully
+            true => return, // moving down sucessfully
             false => {
                 self.stack.push(self.current_brick.clone());
                 self.current_brick = Brick::random();
@@ -121,6 +123,7 @@ impl Default for World {
     fn default() -> Self {
         World {
             current_brick: Brick::random(),
+            game_control: GameControls::default(),
             stack: vec![],
             game: Game::default(),
             dimension: Dimension::empty(),

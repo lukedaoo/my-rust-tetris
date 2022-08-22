@@ -61,6 +61,7 @@ impl Brick {
             }
             let start_pos = grid_size.grid_canvas_l as u32 + coord.x * dx;
             let end_pos = config.height() - (coord.y + 1) * dy + grid_size.margin_top as u32;
+
             drawable.draw_rectangle(
                 start_pos as i32,
                 end_pos as i32,
