@@ -1,4 +1,4 @@
-use self::{brick_factory::BrickFactory, brick_type::BrickType};
+use self::{brick_factory::BrickFactory, brick_type::BrickType, circular_num::CircularNum};
 use crate::{
     common::{Coord, Direction},
     config::Config,
@@ -7,18 +7,22 @@ use raylib::prelude::{Color, RaylibDraw, RaylibDrawHandle};
 
 pub mod brick_factory;
 pub mod brick_type;
+pub mod circular_num;
 pub mod collisions;
+pub mod rotation_direction;
 
 #[derive(Clone)]
 pub struct Brick {
     brick_type: BrickType,
     coords: Vec<Coord>,
     color: Color,
+    rotation_state: CircularNum,
 }
 
 impl Brick {
     pub fn random() -> Brick {
         let brick_type = BrickFactory::random_brick_type();
+        // let brick_type = BrickType::O;
         let start_coords = BrickType::get_start_coords(brick_type);
 
         Brick::spawn(start_coords, brick_type)
@@ -46,12 +50,13 @@ impl Brick {
             brick_type,
             coords: new_coords,
             color,
+            rotation_state: CircularNum::default(),
         }
     }
 }
 
 impl Brick {
-    pub fn render(&self, drawable: &mut RaylibDrawHandle, config: &Config) {
+    fn internal_render(&self, drawable: &mut RaylibDrawHandle, config: &Config, alpha: f32) {
         let grid_size = config.grid_size();
 
         let dx = grid_size.acutal_width as u32 / grid_size.horizontal_size;
@@ -69,9 +74,17 @@ impl Brick {
                 end_pos as i32,
                 dx as i32,
                 dy as i32,
-                self.color,
+                self.color.fade(alpha),
             );
         }
+    }
+
+    pub fn render(&self, drawable: &mut RaylibDrawHandle, config: &Config) {
+        self.internal_render(drawable, config, 1_f32);
+    }
+
+    pub fn render_alpha(&self, drawable: &mut RaylibDrawHandle, config: &Config) {
+        self.internal_render(drawable, config, 0.4_f32);
     }
 
     pub fn move_by(&mut self, (x, y): (i32, i32)) {
@@ -111,5 +124,13 @@ impl Brick {
 
     pub fn coords_mut(&mut self) -> &mut Vec<Coord> {
         &mut self.coords
+    }
+
+    pub fn rotation_state(&mut self) -> &CircularNum {
+        &self.rotation_state
+    }
+
+    pub fn rotation_state_mut(&mut self) -> &mut CircularNum {
+        &mut self.rotation_state
     }
 }

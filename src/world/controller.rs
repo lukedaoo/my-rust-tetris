@@ -2,7 +2,7 @@ use raylib::prelude::*;
 
 use crate::common::Direction;
 
-use super::World;
+use super::{FocusOn, World};
 
 impl World {
     pub fn on_pressed(&mut self) {
@@ -30,6 +30,7 @@ impl World {
 
     pub fn on_stopped(&mut self) {
         println!("On stopped");
+
         unsafe {
             raylib::ffi::CloseWindow();
         }
@@ -37,9 +38,9 @@ impl World {
 
     fn handle_key_pressed(&mut self, key_pressed: KeyboardKey) {
         match key_pressed {
-            KeyboardKey::KEY_LEFT => self.check_and_move(Direction::Left),
-            KeyboardKey::KEY_RIGHT => self.check_and_move(Direction::Right),
-            KeyboardKey::KEY_DOWN => self.check_and_move(Direction::Down),
+            KeyboardKey::KEY_LEFT => self.check_and_move(FocusOn::CurrentBrick, Direction::Left),
+            KeyboardKey::KEY_RIGHT => self.check_and_move(FocusOn::CurrentBrick, Direction::Right),
+            KeyboardKey::KEY_DOWN => self.check_and_move(FocusOn::CurrentBrick, Direction::Down),
             KeyboardKey::KEY_R => {
                 self.reset();
                 true
@@ -50,18 +51,19 @@ impl World {
                 }
                 true
             }
-            // KeyboardKey::KEY_Q => {
-            //     if self.game.is_paused() {
-            //         self.stop();
-            //     }
-            //     true
-            // }
+            KeyboardKey::KEY_Z => {
+                self.rotate_current_brick_clock_wise();
+                true
+            }
+            KeyboardKey::KEY_X => {
+                self.rotate_current_brick_counter_clock_wise();
+                true
+            }
+            KeyboardKey::KEY_SPACE => {
+                self.force_fall_brick();
+                true
+            }
             _ => false,
         };
-
-        // println!(
-        //     "Move status when {:?} pressed: {} ",
-        //     key_pressed, move_status_with_key
-        // );
     }
 }

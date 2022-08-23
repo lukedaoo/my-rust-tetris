@@ -44,7 +44,8 @@ impl Game {
     }
 
     pub fn should_fall(&mut self) -> bool {
-        self.ticks % 3 == 0
+        self.ticks % 20 == 0
+        // true
     }
 }
 

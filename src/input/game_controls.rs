@@ -36,7 +36,7 @@ impl Default for GameControls {
 
         let move_left = ControllerKey {
             key: KeyboardKey::KEY_LEFT,
-            repeat: Repeat { delay: 0, rate: 4 },
+            repeat: Repeat { delay: 4, rate: 4 },
             state: KeyState::default(),
             buffer: Buffer::Closed,
         };
@@ -69,7 +69,38 @@ impl Default for GameControls {
             buffer: Buffer::Closed,
         };
 
-        let controls = vec![move_down, move_left, move_right, reset, pause, quit];
+        let rotation_clockwise = ControllerKey {
+            key: KeyboardKey::KEY_Z,
+            repeat: Repeat { delay: 8, rate: 8 },
+            state: KeyState::default(),
+            buffer: Buffer::Closed,
+        };
+
+        let rotation_counter_clockwise = ControllerKey {
+            key: KeyboardKey::KEY_X,
+            repeat: Repeat { delay: 8, rate: 8 },
+            state: KeyState::default(),
+            buffer: Buffer::Closed,
+        };
+
+        let force_fall_brick = ControllerKey {
+            key: KeyboardKey::KEY_SPACE,
+            repeat: Repeat { delay: 4, rate: 0 },
+            state: KeyState::default(),
+            buffer: Buffer::Closed,
+        };
+
+        let controls = vec![
+            move_down,
+            move_left,
+            move_right,
+            reset,
+            pause,
+            quit,
+            rotation_clockwise,
+            rotation_counter_clockwise,
+            force_fall_brick,
+        ];
 
         GameControls {
             control_keys: controls,

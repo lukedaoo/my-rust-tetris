@@ -5,16 +5,27 @@ mod mechanism;
 
 use raylib::prelude::*;
 
-use crate::{brick::Brick, config::Config, input::game_controls::GameControls};
+use crate::{
+    brick::{brick_factory::BrickFactory, Brick},
+    config::Config,
+    input::game_controls::GameControls,
+};
 
 use self::game::Game;
 
 pub struct World {
     current_brick: Brick,
+    preview_brick: Brick,
     stack: Vec<Brick>,
     game_control: GameControls,
     game: Game,
     dimension: Dimension,
+}
+
+#[derive(Clone)]
+pub enum FocusOn {
+    CurrentBrick,
+    PreviewBrick,
 }
 
 struct Dimension {
@@ -51,6 +62,8 @@ impl World {
             brick.render(drawable, config);
         }
 
+        self.preview_brick.render_alpha(drawable, config);
+
         self.current_brick.render(drawable, config);
     }
 
@@ -61,6 +74,7 @@ impl World {
         }
 
         if self.game.is_over() {
+            self.reset();
             return;
         }
 
@@ -70,6 +84,10 @@ impl World {
         }
 
         self.game.increase_ticks();
+
+        //
+        self.fall_preview_brick();
+
         self.game_control.update(handle);
         self.on_pressed();
 
@@ -81,6 +99,7 @@ impl World {
     }
 
     pub fn reset(&mut self) {
+        println!("Reset");
         self.current_brick = Brick::random();
         self.game_control = GameControls::default();
         self.stack = vec![];
@@ -97,8 +116,12 @@ impl World {
 
 impl Default for World {
     fn default() -> Self {
+        let random_brick = BrickFactory::random_brick_type();
+        let current_brick = Brick::spawn_by_brick_type(random_brick);
+        let preview_brick = current_brick.clone();
         World {
-            current_brick: Brick::random(),
+            current_brick,
+            preview_brick,
             game_control: GameControls::default(),
             stack: vec![],
             game: Game::default(),
@@ -113,5 +136,13 @@ impl World {
     }
     pub fn stop(&mut self) {
         self.game.stop();
+    }
+
+    pub fn current_brick(&self) -> &Brick {
+        &self.current_brick
+    }
+
+    pub fn preview_brick(&self) -> &Brick {
+        &self.preview_brick
     }
 }
