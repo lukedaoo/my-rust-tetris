@@ -27,7 +27,7 @@ impl Game {
     }
 
     pub fn should_fall(&mut self) -> bool {
-        self.ticks % 20 == 0 // 10 frames
+        self.ticks % 3 == 0
     }
 }
 

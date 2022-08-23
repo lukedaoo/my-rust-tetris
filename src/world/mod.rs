@@ -1,10 +1,12 @@
+mod brick_move_mechanism;
+mod clear_row_mechanism;
 mod controller;
 mod game;
 mod grid;
 
 use raylib::prelude::*;
 
-use crate::{brick::Brick, common::Direction, config::Config, input::game_controls::GameControls};
+use crate::{brick::Brick, config::Config, input::game_controls::GameControls};
 
 use self::game::Game;
 
@@ -55,35 +57,24 @@ impl World {
 
     pub fn update(&mut self, handle: &mut RaylibHandle) {
         if self.game.is_over() {
-            println!("Game is over");
+            // println!("Game is over");
             return;
         }
 
         if !self.game.is_running() {
-            println!("No more spawn bricks");
+            // println!("No more spawn bricks");
             return;
         }
 
         self.game.increase_ticks();
         self.game_control.update(handle);
         self.on_pressed();
+
         if self.game.should_fall() {
             self.fall_brick();
         }
-    }
-
-    fn fall_brick(&mut self) {
-        match self.check_and_move(Direction::Down) {
-            true => return, // moving down sucessfully
-            false => {
-                self.stack.push(self.current_brick.clone());
-                self.current_brick = Brick::random();
-
-                if self.check_game_over() {
-                    self.game.set_game_over();
-                }
-            }
-        }
+        let row_has_full_pieces = self.find_rows_has_full_pieces();
+        self.clear_rows_and_fall_other_pieces_down(&row_has_full_pieces);
     }
 
     fn check_game_over(&self) -> bool {
@@ -91,31 +82,6 @@ impl World {
         let is_over = Brick::will_collide_all(&self.current_brick, &self.stack, dx_dy_on_top);
 
         is_over
-    }
-
-    fn is_safe_to_move(&self, direction: Direction) -> bool {
-        let dx_dy = Direction::get_dxdy(direction);
-
-        let within_boundary = self
-            .current_brick
-            .within_boundary(dx_dy, self.dimension.to_tuple());
-
-        let mut collision = false;
-
-        if within_boundary {
-            collision = Brick::will_collide_all(&self.current_brick, &self.stack, dx_dy);
-        }
-
-        within_boundary && !collision
-    }
-
-    pub fn check_and_move(&mut self, direction: Direction) -> bool {
-        if !self.is_safe_to_move(direction) {
-            return false;
-        }
-        self.current_brick.move_by_direction(direction);
-
-        true
     }
 }
 

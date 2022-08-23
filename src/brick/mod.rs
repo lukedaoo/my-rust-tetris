@@ -11,6 +11,7 @@ pub mod collisions;
 
 #[derive(Clone)]
 pub struct Brick {
+    brick_type: BrickType,
     coords: Vec<Coord>,
     color: Color,
 }
@@ -42,6 +43,7 @@ impl Brick {
             .collect();
 
         Brick {
+            brick_type,
             coords: new_coords,
             color,
         }
@@ -95,5 +97,19 @@ impl Brick {
         }
 
         true
+    }
+}
+
+impl Brick {
+    pub fn brick_type(&self) -> BrickType {
+        self.brick_type
+    }
+
+    pub fn coords(&self) -> &Vec<Coord> {
+        &self.coords
+    }
+
+    pub fn coords_mut(&mut self) -> &mut Vec<Coord> {
+        &mut self.coords
     }
 }

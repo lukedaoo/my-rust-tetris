@@ -1,6 +1,6 @@
 use crate::common::Coord;
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub enum BrickType {
     O,
     I,

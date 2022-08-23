@@ -12,9 +12,7 @@ pub fn render(drawable: &mut RaylibDrawHandle, config: &Config) {
     for x in (0..=grid_size.horizontal_size).into_iter() {
         let current_x = x * dx + grid_size.grid_canvas_l as u32;
         let end_y = *config.height_with_margin() - grid_size.margin_bottom as u32;
-        // let end_y = *config.height();
         let start_pos = Utils::to_vector2((current_x, grid_size.margin_top as u32));
-        // let start_pos = Utils::to_vector2(tuple)
         let end_pos = Utils::to_vector2((current_x, end_y));
 
         drawable.draw_line_ex(start_pos, end_pos, 0.5_f32, Color::LIGHTGRAY);
