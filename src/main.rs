@@ -13,6 +13,7 @@ fn main() {
 
     let mut world = World::default();
     world.update_dimemsion(&config);
+    world.start();
 
     while !rl.window_should_close() {
         world.update(&mut rl);

@@ -1,6 +1,6 @@
 use std::collections::{hash_map::RandomState, HashMap, HashSet};
 
-use super::World;
+use crate::world::World;
 
 impl World {
     pub fn clear_rows_and_fall_other_pieces_down(&mut self, row_has_full_pieces: &HashSet<u32>) {

@@ -1,8 +1,7 @@
-mod brick_move_mechanism;
-mod clear_row_mechanism;
 mod controller;
 mod game;
 mod grid;
+mod mechanism;
 
 use raylib::prelude::*;
 
@@ -56,13 +55,17 @@ impl World {
     }
 
     pub fn update(&mut self, handle: &mut RaylibHandle) {
-        if self.game.is_over() {
-            // println!("Game is over");
+        if !self.game.is_running() {
+            self.on_stopped();
             return;
         }
 
-        if !self.game.is_running() {
-            // println!("No more spawn bricks");
+        if self.game.is_over() {
+            return;
+        }
+
+        if self.game.is_paused() {
+            self.on_paused(handle);
             return;
         }
 
@@ -75,6 +78,13 @@ impl World {
         }
         let row_has_full_pieces = self.find_rows_has_full_pieces();
         self.clear_rows_and_fall_other_pieces_down(&row_has_full_pieces);
+    }
+
+    pub fn reset(&mut self) {
+        self.current_brick = Brick::random();
+        self.game_control = GameControls::default();
+        self.stack = vec![];
+        self.game = Game::default();
     }
 
     fn check_game_over(&self) -> bool {
@@ -94,5 +104,14 @@ impl Default for World {
             game: Game::default(),
             dimension: Dimension::empty(),
         }
+    }
+}
+
+impl World {
+    pub fn start(&mut self) {
+        self.game.start();
+    }
+    pub fn stop(&mut self) {
+        self.game.stop();
     }
 }

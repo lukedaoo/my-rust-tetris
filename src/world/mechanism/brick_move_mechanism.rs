@@ -1,6 +1,4 @@
-use crate::{brick::Brick, common::Direction};
-
-use super::World;
+use crate::{brick::Brick, common::Direction, world::World};
 
 impl World {
     pub fn fall_brick(&mut self) {

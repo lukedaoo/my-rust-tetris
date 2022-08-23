@@ -36,7 +36,7 @@ impl Default for GameControls {
 
         let move_left = ControllerKey {
             key: KeyboardKey::KEY_LEFT,
-            repeat: Repeat { delay: 4, rate: 4 },
+            repeat: Repeat { delay: 0, rate: 4 },
             state: KeyState::default(),
             buffer: Buffer::Closed,
         };
@@ -48,7 +48,28 @@ impl Default for GameControls {
             buffer: Buffer::Closed,
         };
 
-        let controls = vec![move_down, move_left, move_right];
+        let reset = ControllerKey {
+            key: KeyboardKey::KEY_R,
+            repeat: Repeat { delay: 4, rate: 0 },
+            state: KeyState::default(),
+            buffer: Buffer::Closed,
+        };
+
+        let pause = ControllerKey {
+            key: KeyboardKey::KEY_P,
+            repeat: Repeat { delay: 0, rate: 0 },
+            state: KeyState::default(),
+            buffer: Buffer::Closed,
+        };
+
+        let quit = ControllerKey {
+            key: KeyboardKey::KEY_Q,
+            repeat: Repeat { delay: 0, rate: 0 },
+            state: KeyState::default(),
+            buffer: Buffer::Closed,
+        };
+
+        let controls = vec![move_down, move_left, move_right, reset, pause, quit];
 
         GameControls {
             control_keys: controls,
