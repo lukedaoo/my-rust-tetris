@@ -6,7 +6,7 @@ mod mechanism;
 use raylib::prelude::*;
 
 use crate::{
-    brick::{brick_factory::BrickFactory, Brick},
+    brick::{brick_factory::BrickFactory, brick_type::BrickType, Brick},
     config::Config,
     input::game_controls::GameControls,
 };
@@ -16,6 +16,7 @@ use self::game::Game;
 pub struct World {
     current_brick: Brick,
     preview_brick: Brick,
+    next_brick_type: BrickType,
     stack: Vec<Brick>,
     game_control: GameControls,
     game: Game,
@@ -41,8 +42,16 @@ impl Dimension {
         }
     }
 
+    pub fn h(&self) -> i32 {
+        self.h_size
+    }
+
+    pub fn v(&self) -> i32 {
+        self.v_size
+    }
+
     pub fn to_tuple(&self) -> (i32, i32) {
-        (self.h_size, self.v_size)
+        (self.h(), self.v())
     }
 }
 
@@ -57,13 +66,15 @@ impl World {
 
     pub fn render(&mut self, drawable: &mut RaylibDrawHandle, config: &Config) {
         grid::render(drawable, config);
+        grid::render_incomming_brick(drawable, config);
+
+        self.render_imcoming_brick(drawable, config);
 
         for brick in self.stack.iter() {
             brick.render(drawable, config);
         }
 
         self.preview_brick.render_alpha(drawable, config);
-
         self.current_brick.render(drawable, config);
     }
 
@@ -84,8 +95,6 @@ impl World {
         }
 
         self.game.increase_ticks();
-
-        //
         self.fall_preview_brick();
 
         self.game_control.update(handle);
@@ -99,7 +108,6 @@ impl World {
     }
 
     pub fn reset(&mut self) {
-        println!("Reset");
         self.current_brick = Brick::random();
         self.game_control = GameControls::default();
         self.stack = vec![];
@@ -112,6 +120,12 @@ impl World {
 
         is_over
     }
+
+    fn render_imcoming_brick(&self, drawable: &mut RaylibDrawHandle, config: &Config) {
+        let start_coords = BrickType::get_start_coords_for_incoming_brick(self.next_brick_type);
+        let next_brick = Brick::spawn(start_coords, self.next_brick_type);
+        next_brick.render(drawable, config);
+    }
 }
 
 impl Default for World {
@@ -122,6 +136,7 @@ impl Default for World {
         World {
             current_brick,
             preview_brick,
+            next_brick_type: BrickFactory::random_brick_type(),
             game_control: GameControls::default(),
             stack: vec![],
             game: Game::default(),

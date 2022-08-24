@@ -39,7 +39,7 @@ impl World {
     }
 
     fn fall_down_other_pieces(&mut self, row_has_full_pieces: &HashSet<u32>) {
-        let mut diff = vec![0; 10 as usize];
+        let mut diff = vec![0; self.dimension.v() as usize];
         for row in row_has_full_pieces.iter() {
             for num in diff.iter_mut().skip(*row as usize) {
                 *num += 1;

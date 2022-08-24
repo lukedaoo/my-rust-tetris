@@ -84,7 +84,7 @@ impl Brick {
     }
 
     pub fn render_alpha(&self, drawable: &mut RaylibDrawHandle, config: &Config) {
-        self.internal_render(drawable, config, 0.4_f32);
+        self.internal_render(drawable, config, 0.4_f32)
     }
 
     pub fn move_by(&mut self, (x, y): (i32, i32)) {

@@ -36,14 +36,14 @@ impl Default for GameControls {
 
         let move_left = ControllerKey {
             key: KeyboardKey::KEY_LEFT,
-            repeat: Repeat { delay: 4, rate: 4 },
+            repeat: Repeat { delay: 0, rate: 0 },
             state: KeyState::default(),
             buffer: Buffer::Closed,
         };
 
         let move_right = ControllerKey {
             key: KeyboardKey::KEY_RIGHT,
-            repeat: Repeat { delay: 4, rate: 4 },
+            repeat: Repeat { delay: 0, rate: 0 },
             state: KeyState::default(),
             buffer: Buffer::Closed,
         };

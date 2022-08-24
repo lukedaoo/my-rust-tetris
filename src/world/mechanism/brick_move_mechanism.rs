@@ -1,3 +1,4 @@
+use crate::brick::brick_factory::BrickFactory;
 use crate::world::FocusOn;
 use crate::{brick::Brick, common::Direction, world::World};
 
@@ -7,9 +8,10 @@ impl World {
             true => return, // moving down sucessfully
             false => {
                 self.stack.push(self.current_brick.clone());
-                let next_brick = Brick::random();
-                // println!("spawn {:?}", next_brick.brick_type());
+                let next_brick = Brick::spawn_by_brick_type(self.next_brick_type);
                 self.current_brick = next_brick;
+
+                self.next_brick_type = BrickFactory::random_brick_type();
 
                 if self.check_game_over() {
                     self.game.set_game_over();
@@ -21,9 +23,8 @@ impl World {
     pub fn fall_preview_brick(&mut self) {
         self.preview_brick = self.current_brick.clone();
         loop {
-            match self.check_and_move(FocusOn::PreviewBrick, Direction::Down) {
-                true => {}
-                false => return,
+            if !self.check_and_move(FocusOn::PreviewBrick, Direction::Down) {
+                return;
             }
         }
     }
