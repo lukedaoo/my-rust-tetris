@@ -2,6 +2,7 @@ mod controller;
 mod game;
 mod grid;
 mod mechanism;
+mod textable;
 
 use raylib::prelude::*;
 
@@ -11,7 +12,7 @@ use crate::{
     input::game_controls::GameControls,
 };
 
-use self::game::Game;
+use self::{game::Game, textable::Textable};
 
 pub struct World {
     current_brick: Brick,
@@ -21,6 +22,8 @@ pub struct World {
     game_control: GameControls,
     game: Game,
     dimension: Dimension,
+    line_cleared_text: Textable,
+    score_text: Textable,
 }
 
 #[derive(Clone)]
@@ -76,6 +79,14 @@ impl World {
 
         self.preview_brick.render_alpha(drawable, config);
         self.current_brick.render(drawable, config);
+
+        if self.game.is_running() {
+            let line_cleared_res = format!("Line cleared: {}", self.game.line_cleared());
+            self.line_cleared_text.draw(&line_cleared_res, drawable);
+
+            let score_res = format!("Score: {}", self.game.score());
+            self.score_text.draw(&score_res, drawable);
+        }
     }
 
     pub fn update(&mut self, handle: &mut RaylibHandle) {
@@ -105,6 +116,8 @@ impl World {
         }
         let row_has_full_pieces = self.find_rows_has_full_pieces();
         self.clear_rows_and_fall_other_pieces_down(&row_has_full_pieces);
+
+        self.game.update(row_has_full_pieces.len() as i32);
     }
 
     pub fn reset(&mut self) {
@@ -133,6 +146,21 @@ impl Default for World {
         let random_brick = BrickFactory::random_brick_type();
         let current_brick = Brick::spawn_by_brick_type(random_brick);
         let preview_brick = current_brick.clone();
+
+        let line_cleared = Textable {
+            name: "line_cleared".to_string(),
+            location: (150, 200),
+            font_size: 30,
+            color: Color::PINK,
+        };
+
+        let score = Textable {
+            name: "score".to_string(),
+            location: (150, 250),
+            font_size: 30,
+            color: Color::GREEN,
+        };
+
         World {
             current_brick,
             preview_brick,
@@ -141,6 +169,8 @@ impl Default for World {
             stack: vec![],
             game: Game::default(),
             dimension: Dimension::empty(),
+            line_cleared_text: line_cleared,
+            score_text: score,
         }
     }
 }

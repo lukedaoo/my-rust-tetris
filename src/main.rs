@@ -20,7 +20,7 @@ fn main() {
         let mut drawable = rl.begin_drawing(&thread);
 
         drawable.clear_background(Color::BLACK);
-        drawable.draw_fps(100, 200);
+        drawable.draw_fps(10, 10);
         world.render(&mut drawable, &config);
     }
 }

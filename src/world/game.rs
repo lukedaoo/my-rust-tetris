@@ -1,8 +1,12 @@
+use crate::world::mechanism::score_mechanism;
+
 pub struct Game {
     is_running: bool,
     is_paused: bool,
     is_over: bool,
-    ticks: u32, // internal game ticks
+    ticks: u32, // internal game tick,
+    line_cleared: i32,
+    score: u32,
 }
 
 impl Game {
@@ -44,8 +48,14 @@ impl Game {
     }
 
     pub fn should_fall(&mut self) -> bool {
-        // self.ticks % 20 == 0
-        true
+        self.ticks % 20 == 0
+        // true
+    }
+
+    pub fn update(&mut self, line_cleared: i32) {
+        self.line_cleared += line_cleared;
+        let score: u32 = score_mechanism::calculate_score(line_cleared);
+        self.score += score;
     }
 }
 
@@ -56,6 +66,18 @@ impl Default for Game {
             is_over: false,
             is_paused: false,
             ticks: 0,
+            line_cleared: 0,
+            score: 0,
         }
+    }
+}
+
+impl Game {
+    pub fn line_cleared(&self) -> i32 {
+        self.line_cleared
+    }
+
+    pub fn score(&self) -> u32 {
+        self.score
     }
 }

@@ -17,13 +17,8 @@ impl BrickType {
         const START_AT_Y: u32 = 21; // outside the grid
 
         match self {
-            BrickType::O => Coord::new(START_AT_X, START_AT_Y),
-            BrickType::I => Coord::new(START_AT_X, START_AT_Y),
-            BrickType::T => Coord::new(START_AT_X + 1, START_AT_Y),
-            BrickType::L => Coord::new(START_AT_X + 1, START_AT_Y),
-            BrickType::J => Coord::new(START_AT_X + 1, START_AT_Y),
-            BrickType::S => Coord::new(START_AT_X + 1, START_AT_Y),
-            BrickType::Z => Coord::new(START_AT_X + 1, START_AT_Y),
+            BrickType::O | BrickType::I => Coord::new(START_AT_X, START_AT_Y),
+            _ => Coord::new(START_AT_X + 1, START_AT_Y),
         }
     }
 
